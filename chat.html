@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat with ${user.username}</title>
+<style>
+    body {
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+        margin: 0;
+        background-size: cover;
+    }
+
+    .top { 
+        width: 100%;
+        height: 50px;
+        position: fixed;
+        z-index: 20;
+        display: flex;
+        background-color:white;
+        align-items: center;
+        padding: 0 10px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .a {
+        font-size: 20px;
+        font-weight: bold;
+        position: fixed;
+        color: black;
+        text-decoration: none;
+    }
+
+    #getMessage {
+        flex: 1;
+        overflow-y: auto;
+        padding: 20px;
+    }
+
+    .message {
+        padding: 10px;
+        margin: 10px 0;
+        border-radius: 10px;
+        position: relative;
+        word-wrap: break-word;
+        max-width: auto;
+    }
+
+    .message.left {
+        background-color: #e5e5ea;
+        color: white;
+        align-self: flex-start;
+        border-top-left-radius: 0;
+    }
+
+    .message.right {
+        background-color: #128C7E;
+        color: white;
+        align-self: flex-end;
+        border-top-right-radius: 0;
+    }
+
+    .timestamp {
+        font-size: 0.8em;
+        color: silver;
+        margin-top: 5px;
+        display: block;
+        float: right;
+        right: 5px;
+    }
+
+    #messageForm {
+        display: flex;
+        align-items: center;
+        padding: 10px;
+        background-color: white;
+        border-top: 1px solid #ccc;
+        gap: 0.4rem;
+    }
+
+    #user1Message {
+        flex: 1;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        margin-right: 10px;
+    }
+
+    .btn {
+        padding: 10px 20px;
+        background-color: #128C7E;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .profile-pic {
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        object-fit: cover;
+    }
+</style>
+</head>
+<body>
+
+<div class="top">
+    <a href="/users" class="a" id="username"></a>
+
+    <input type="file" accept="image/*" id="backgroundInput" style="display: none;">
+    <label for="backgroundInput" style="cursor: pointer; font-size: 35px; float: right; right: 5%; position: fixed; z-index: 10; border-radius: 50%;">🖼️</label>
+</div><br><br>
+
+<div id="getMessage"></div>
+
+<form id="messageForm" onsubmit="sendMessage(event)">
+    <textarea id="user1Message" style="font-weight:bold;"rows="2" placeholder="Type your message here..."></textarea>
+   <button type="submit" class="btn">Send</button>
+</form>
+
+<script>
+
+function adjustColorsBasedOnTime() {
+    const date = new Date();
+    const hours = date.getHours();
+    const body = document.body;
+
+    if (hours >= 6 && hours < 18) { // Daytime (6am to 5:59pm)
+        body.style.backgroundColor = "white";
+        body.style.color = "black";
+    } else { // Nighttime (6pm to 5:59am)
+        body.style.backgroundColor = "black";
+        body.style.color = "white";
+    }
+}
+
+// Call the function when the page loads to adjust colors based on the time of day
+adjustColorsBasedOnTime();
+
+
+    async function sendMessage(event) {
+        event.preventDefault();
+        var inputMessage = document.getElementById('user1Message').value;
+        if (inputMessage) {
+            var currentTime = new Date();
+            var formattedTime = currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            var messageObject = {
+                time: formattedTime,
+                message: inputMessage,
+                alignment: 'right',
+                senderId: ${req.session.user.id},
+                senderName: "${req.session.user.username}"
+            };
+            await fetch('/messages/${user.id}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(messageObject)
+            });
+            document.getElementById('user1Message').value = "";
+        } else {
+            alert('Message input is empty');
+        }
+    }
+
+    async function fetchMessages() {
+        const response = await fetch('/messages/${user.id}');
+        const messages = await response.json();
+        var messageContainer = document.getElementById('getMessage');
+        messageContainer.innerHTML = '';
+        messages.forEach(displayMessage);
+        messageContainer.style.display = "block";
+    }
+
+          
+
+    function displayMessage(msg) {
+        var messageContainer = document.getElementById('getMessage');
+        var messageDiv = document.createElement('div');
+        messageDiv.classList.add('message', msg.senderId === ${req.session.user.id} ? 'right' : 'left');
+        messageDiv.innerHTML = \`\${msg.message} <span class="timestamp">\${msg.time}</span>\`;
+        messageContainer.appendChild(messageDiv);
+    }
+
+
+
+    fetchMessages();
+
+    const evtSource = new EventSource('/events/${user.id}');
+    evtSource.onmessage = function(event) {
+        const msg = JSON.parse(event.data);
+        displayMessage(msg);
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const backgroundInput = document.getElementById('backgroundInput');
+        const username = "${user.username}";
+        
+        // Load background image from localStorage for specific user
+        const savedBackground = localStorage.getItem('chatBackground_' + username);
+        if (savedBackground) {
+            document.body.style.backgroundImage = 'url(' + savedBackground + ')';
+        }
+        backgroundInput.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const imageUrl = e.target.result;
+                    document.body.style.backgroundImage = 'url(' + imageUrl + ')';
+                    // Save to localStorage for specific user
+                    localStorage.setItem('chatBackground_' + username, imageUrl);
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+    });
+
+
+document.addEventListener('DOMContentLoaded', () => {
+  fetch('/api/username')
+    .then(response => response.json())
+    .then(data => {
+      if (data.username) {
+        document.getElementById('username').textContent = data.username;
+      } else {
+        document.getElementById('username').textContent = 'Guest';
+      }
+    })
+    .catch(error => {
+      console.error('Error fetching username:', error);
+      document.getElementById('username').textContent = 'Guest';
+    });
+});
+
+</script>
+</body>
+</html>

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign-Up</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body onload="adjustColorsBasedOnTime()">
+<main>
+<br><br>
+
+<!--<div class="image">
+<br>
+<img src="logo.jpeg" class="product-img assembly">
+</div>-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign-Up</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body onload="adjustColorsBasedOnTime()">
+<br><br>
+
+<!--<div class="image">
+<br>
+<img src="logo.jpeg" class="product-img assembly">
+</div>-->
+
+
+<div class="body">
+    <div class="cube">
+        <div class="face front"><img src="chat.jpeg" alt="Front"></div>
+        <div class="face back"><img src="post.jpeg" alt="Back"></div>
+        <div class="face left"><img src="IMG_9694.png" alt="Left"></div>
+        <div class="face right"><img src="products.png" alt="Right"></div>
+        <div class="face top"><img src="laughing .png" alt="Top"></div>
+        <div class="face bottom"><img src="connect.jpeg" alt="Bottom"></div>
+    </div>
+</div>
+<br>
+
+    <h2 style="text-align:center;">PASSTIME</h2>
+
+    <h2 style="text-align:center;" id="text"></h2>
+
+<br>
+<div style="text-align:center;">
+<div style="display:flex; gap:1rem;">
+<a href="/signup">
+    <button class="btn">Sign Up</button>
+  </a>
+<a href="/login">
+  <button class="btn">Log In</button>
+</a>
+</div>
+</div>
+
+</main>
+ <script>
+
+        function adjustColorsBasedOnTime() {
+          const date = new Date();
+          const hours = date.getHours();
+          const body = document.body;
+
+          if (hours >= 6 && hours < 18) { // Daytime (6am to 5:59pm)
+            body.style.backgroundColor = "white";
+            body.style.color = "black";
+          } else { // Nighttime (6pm to 5:59am)
+            body.style.backgroundColor = "black";
+            body.style.color = "white";
+          }
+        }
+
+
+        const texts = [
+            'Display your productivity😃',
+            'Explore new opportunities 🌐',
+            'Share your experiences 📝',
+            'Discover amazing content 📚',
+            'Stay connected with friends 👫',
+            'Join exciting communities 💬'
+        ];
+        let currentIndex = 0;
+
+        function changeText(newText) {
+            document.getElementById('text').textContent = newText;
+        }
+
+        setInterval(() => {
+            changeText(texts[currentIndex]);
+            currentIndex = (currentIndex + 1) % texts.length; // Cycle through texts
+        }, 3000); // Change text every 3 seconds
+
+  </script>
+</body>
+</html>

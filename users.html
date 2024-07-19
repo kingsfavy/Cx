@@ -1,0 +1,345 @@
+        
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>People Online</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .dropdown {
+            position: relative;
+            display: block;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+            width: 100%;
+            float: left;
+            border-radius: 10px 15px 10px 10px;
+        }
+
+        .dropdown-content a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            border-radius: 10px 15px 10px 10px;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #f1f1f1;
+            border-radius: 10px 15px 10px 10px;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropbtn {
+            background-color: lightgrey;
+            color: Window;
+            padding: 8px;
+            font-size: 20px;
+            border: none;
+            cursor: pointer;
+            height: 65px;
+            border-radius: 0 15px 15px 0;
+            font-weight: bold;
+        }
+
+        .dropbtn:hover, .dropbtn:focus {
+            background-color: gray;
+        }
+
+        .friend-request {
+            background-color: #f9f9f9;
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+
+        .friend-request button {
+            margin-right: 10px;
+        }
+
+        #searchInput {
+            border-radius: 20px;
+            background: linear-gradient(310deg, lightgray, gray);
+        }
+
+        .con {
+            display: flex;
+            width: 100%;
+            gap: 0.2rem;
+            align-items: center;
+        }
+
+        .user {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background-color: lightgray;
+            height: 35px;
+            border-radius: 15px;
+            justify-content: space-between;
+        }
+
+        .user img, .user h3, .user .notification {
+            display: flex;
+            align-items: center;
+        }
+
+        .blurred {
+            filter: blur(5px);
+        }
+
+        .request {
+            display: none;
+            float: right;
+            margin-right: 10px;
+            top: 10px;
+            border: none;
+            font-size: 18px;
+        }
+
+        .user-status {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .status-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .online {
+            background-color: green;
+        }
+
+        .offline {
+            background-color: black;
+        }
+    </style>
+</head>
+<body id="body">
+
+<main>
+<div class="blurry">
+    <a href="/" style="text-decoration:none;">
+        <h1 style="margin-left:10px; text-align:left;">People Online</h1>
+    </a>
+    <div style="text-decoration:none; display:flex; justify-content:space-around;">
+        <a href="/users">
+            <button onclick="showAll()" class="btn">All</button>
+        </a>
+        <button onclick="showRequest()" class="btn">Request</button>
+        <button onclick="showConnections()" class="btn">Connections</button>
+        <button onclick="showUnread()" class="btn">Unread</button>
+    </div>
+    <br>
+    <input type="text" id="searchInput" placeholder="Search for a user" onkeyup="searchUser()">
+    <br><br>
+    <div id="user-list">
+        <!-- User list will be displayed here -->
+    </div>
+    <audio id="notificationSound" src="/Ding Sound Effect (320).mp3"></audio>
+</div>
+</main>
+<script>
+    function adjustColorsBasedOnTime() {
+        const date = new Date();
+        const hours = date.getHours();
+        const body = document.body;
+
+        if (hours >= 6 && hours < 18) {
+            body.style.backgroundColor = "white";
+            body.style.color = "black";
+        } else {
+            body.style.backgroundColor = "black";
+            body.style.color = "white";
+        }
+    }
+
+    adjustColorsBasedOnTime();
+
+    document.addEventListener('DOMContentLoaded', (event) => {
+        fetch('/api/users')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('user-list').innerHTML = data;
+            });
+
+        document.querySelectorAll('.user').forEach(userDiv => {
+            userDiv.addEventListener('click', () => {
+                const userId = userDiv.getAttribute('data-user-id');
+                window.location.href = '/chat/' + userId;
+            });
+        });
+
+        const evtSource = new EventSource('/notifications/${currentUser.id}');
+        evtSource.onmessage = function(event) {
+            try {
+                const data = JSON.parse(event.data);
+                console.log('Received data:', data);
+
+                const userDiv = document.querySelector('.user[data-user-id="' + data.senderId + '"]');
+                if (!userDiv) {
+                    console.error('User div not found for senderId:', data.senderId);
+                    return;
+                }
+
+                const notification = userDiv.querySelector('.notification');
+                if (!notification) {
+                    console.error('Notification element not found for userDiv:', userDiv);
+                    return;
+                }
+
+                const requestDiv = userDiv.querySelector('.request');
+                if (!requestDiv) {
+                    console.error('Request div not found for userDiv parent:', userDiv.parentElement);
+                    return;
+                }
+
+                if (data.type === 'friend-request') {
+                    requestDiv.style.display = 'block'; // Show the 👤 icon
+                } else if (data.type === 'message') {
+                    userDiv.style.backgroundColor = 'blue';
+                    notification.style.display = 'inline';
+                    requestDiv.style.display = 'none'; // Hide the 👤 icon
+                } else {
+                    notification.style.display = 'inline';
+                    notification.style.float = 'right';
+                    notification.style.right = '10px';
+                    userDiv.style.backgroundColor = 'gray';
+                    console.warn('Unknown notification type:', data.type);
+                }
+            } catch (error) {
+                console.error('Error processing notification event:', error);
+            }
+        };
+    });
+
+    function showAll() {
+        const bttn = document.getElementById("dd");
+        document.querySelectorAll('.user').forEach(userDiv => {
+            userDiv.style.display = 'block';
+            bttn.style.display = 'block';
+        });
+    }
+
+    function showRequest() {
+        const ddbtn = document.getElementById("dd");
+        document.querySelectorAll('.user').forEach(userDiv => {
+            if (userDiv.querySelector('.request').style.display === 'inline') {
+                userDiv.style.display = 'block';
+                ddbtn.style.display = 'block';
+
+} else {
+            userDiv.style.display = 'none';
+            ddbtn.style.display = 'none';
+        }
+    });
+}
+
+function showConnections() {
+    document.querySelectorAll('.user').forEach(userDiv => {
+        if (userDiv.style.backgroundColor === 'blue') {
+            userDiv.style.display = 'block';
+        } else {
+            userDiv.style.display = 'none';
+        }
+    });
+}
+
+function showUnread() {
+    document.querySelectorAll('.user').forEach(userDiv => {
+        if (userDiv.querySelector('.notification').style.display === 'inline') {
+            userDiv.style.display = 'block';
+        } else {
+            userDiv.style.display = 'none';
+        }
+    });
+}
+
+function searchUser() {
+    const input = document.getElementById('searchInput').value.toLowerCase();
+    document.querySelectorAll('.user').forEach(userDiv => {
+        const username = userDiv.querySelector('h3').textContent.toLowerCase();
+        if (username.includes(input)) {
+            userDiv.style.display = 'block';
+        } else {
+            userDiv.style.display = 'none';
+        }
+    });
+}
+
+function sendFriendRequest(userId) {
+            fetch('/friend-request', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ toUserId: userId })
+            }).then(response => response.json())
+              .then(data => {
+                  alert(data.message);
+              }).catch(error => {
+                  console.error('Error:', error);
+              });
+        }
+
+   let touchStartX = 0;
+        let touchEndX = 0;
+        let swipeCount = 0;
+        const maxTimeBetweenSwipes = 500; // Maximum time between swipes in ms
+        let lastSwipeTime = 0;
+
+        function handleTouchStart(event) {
+            touchStartX = event.changedTouches[0].screenX;
+        }
+
+        function handleTouchEnd(event) {
+            touchEndX = event.changedTouches[0].screenX;
+            handleSwipe();
+        }
+
+        function handleSwipe() {
+            const swipeDistance = touchStartX - touchEndX;
+            const screenWidth = window.innerWidth;
+            const currentTime = new Date().getTime();
+
+            if (swipeDistance > 50 && touchStartX > screenWidth - 50) { // Swipe left and started from the right edge
+                if (currentTime - lastSwipeTime < maxTimeBetweenSwipes) {
+                    swipeCount++;
+                } else {
+                    swipeCount = 1;
+                }
+
+                lastSwipeTime = currentTime;
+
+                if (swipeCount >= 2) {
+                    redirectToHomePage();
+                }
+            }
+        }
+
+        function redirectToHomePage() {
+            window.location.href = '/home'; // Change this to your home page URL
+        }
+
+        document.addEventListener('touchstart', handleTouchStart, false);
+        document.addEventListener('touchend', handleTouchEnd, false);
+
+</script>
+</body>
+</html>

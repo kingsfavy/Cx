@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Header with Sliding Logo</title>
+ <style>
+
+body, html {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+main{
+padding:0 6% 0 6%;
+}
+
+legend{
+font-size:20x;
+font-weight:bolder;
+}
+
+fieldset{
+border-radius: 15px;
+boder: 2px solid black;
+}
+
+header {
+    position: fixed;
+    width: 100%;
+    background-color: #333;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 0;
+    transition: all 0.3s ease;
+    top:0;
+}
+
+.profile-pic img, .logo img {
+    width: 100px;
+    height:100px;
+    transition: all 0.3s ease;
+    border-radius:50px;
+}
+
+nav {
+    display: flex;
+    gap: 0.2rem;
+    justify-content: space-around;
+    width: 100%;
+}
+
+nav ul {
+    list-style-type: none;
+    display: flex;
+      gap: 0.2rem;
+    justify-content: space-around;
+    width: 100%;
+}
+
+nav ul li {
+    margin: 0 2px;
+}
+
+nav ul li a {
+    color: white;
+    text-decoration: none;
+}
+
+.hidden {
+    display: none;
+}
+
+header.scrolled {
+    justify-content: flex-start;
+    padding-left: 20px;
+}
+
+header.scrolled .logo img, header.scrolled .profile-pic img {
+    width: 50px;
+    height:50px;
+    margin-right: 20px;
+border-radius:50px;
+}
+
+header.scrolled nav {
+    display: block;
+}
+
+header.business-header {
+    background-color: #555; /* Change background color for business section */
+}
+
+header.business-header .profile-pic img {
+    display: none; /* Hide profile picture in business header */
+}
+#home{
+top:50%;
+}
+#logo{
+display:none;
+}
+
+</style>
+</head>
+<body>
+    <header id="header">
+        <div class="profile-pic" id="profile-pic">
+ <img  src="" id="profilePic" alt="Profile Picture">
+ </div>
+
+  <div class="logo" id="logo">
+    <img src="" class="img" alt="Logo">
+ </div>
+
+ <nav id="nav" class="hidden">
+            <ul>
+                <li><a href="#home">Home</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#services">Services</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section id="home">         
+<div style="height:200px;">
+</div>
+<br>
+<input type="file" accept="image/*" name="profilePic" id="profileInput" style="display: none;" onchange="loadFile(event)">
+<label for="profileInput" style="cursor: pointer;">Upload Profile Picture</label>
+<br><br>
+ <fieldset style="background-color:lightgray;">
+  <legend><strong>User Details</strong></legend>
+<hr>
+  <h4 id="username">Loading...</h4>
+<hr>
+  <h4 id="email">Loading...</h4>
+<hr>
+  <h4 id="phone">Loading...</h4>
+<hr>
+  <h4 id="date">Loading...</h4>
+<hr>
+  <h4 id="bio">Loading...</h4>
+<hr>
+</fieldset>  
+<br><br>
+
+
+        </section>
+        <section id="business">
+<br>
+<input type="file" accept="image/*" name="logo" id="logoInput" style="display: none;" onchange="loadFiles(event)">
+<label for="logoInput" style="cursor: pointer;">Upload Logo</label>
+<br><br>
+
+  <fieldset style="background-color:lightgray;">
+  <legend><strong>Business Details</strong></legend>
+<hr>
+  <h4 id="bname">Loading...</h4>
+<hr>
+  <h4 id="blocation">Loading...</h4>
+<hr>
+  <h4 id="btel">Loading...</h4>
+<hr>
+  <h4 id="bemail">Loading...</h4>
+<hr>
+  <h4 id="bdes">Loading...</h4>
+<hr>
+</fieldset>
+        </section>
+    
+        
+<h3 id="joined" style="bottom:0;"></h3>
+
+</main>
+<script>
+
+var loadFile = function(event) {
+	var image = document.getElementById('profilePic');
+	image.src = URL.createObjectURL(event.target.files[0]);
+};
+
+        function adjustColorsBasedOnTime() {
+            const date = new Date();
+            const hours = date.getHours();
+            const body = document.body;
+
+            if (hours >= 6 && hours < 18) {
+                body.style.backgroundColor = "white";
+                body.style.color = "black";
+            } else {
+                body.style.backgroundColor = "black";
+                body.style.color = "white";
+            }
+        }
+        adjustColorsBasedOnTime();
+
+
+    document.addEventListener('DOMContentLoaded', () => {
+  fetch('/api/user-details')
+    .then(response => response.json())
+    .then(data => {
+      if (data.username) {
+        document.getElementById('username').textContent = data.username;
+        document.getElementById('email').textContent = data.email;
+        document.getElementById('bname').textContent = data.bname;
+        document.getElementById('btel').textContent = data.btel;
+        document.getElementById('bemail').textContent = data.bemail;
+        document.getElementById('blocation').textContent = data.blocation;
+        document.getElementById('bdes').textContent = data.bdes;
+        document.getElementById('date').textContent = data.date;
+        document.getElementById('phone').textContent = data.phone;
+        document.getElementById('bio').textContent = data.bio;
+        
+        if (data.profilePic) {
+          document.getElementById('profilePic').src = data.profilePic;
+        } else {
+          document.getElementById('profilePic').alt = 'No profile picture';
+        }
+
+        if (data.logo) {
+          document.getElementById('logo').src = data.logo;
+        } else {
+          document.getElementById('logo').alt = 'No logo';
+        }
+      } else {
+        document.getElementById('username').textContent = 'Guest';
+      }
+    })
+    .catch(error => {
+      console.error('Error fetching user details:', error);
+      document.getElementById('username').textContent = 'Guest';
+    });
+});
+
+
+
+   let touchStartX = 0;
+        let touchEndX = 0;
+        let swipeCount = 0;
+        const maxTimeBetweenSwipes = 500; // Maximum time between swipes in ms
+        let lastSwipeTime = 0;
+
+        function handleTouchStart(event) {
+            touchStartX = event.changedTouches[0].screenX;
+        }
+
+        function handleTouchEnd(event) {
+            touchEndX = event.changedTouches[0].screenX;
+            handleSwipe();
+        }
+
+        function handleSwipe() {
+            const swipeDistance = touchStartX - touchEndX;
+            const screenWidth = window.innerWidth;
+            const currentTime = new Date().getTime();
+
+            if (swipeDistance > 50 && touchStartX > screenWidth - 50) { // Swipe left and started from the right edge
+                if (currentTime - lastSwipeTime < maxTimeBetweenSwipes) {
+                    swipeCount++;
+                } else {
+                    swipeCount = 1;
+                }
+
+                lastSwipeTime = currentTime;
+
+                if (swipeCount >= 2) {
+                    redirectToHomePage();
+                }
+            }
+        }
+
+        function redirectToHomePage() {
+            window.location.href = '/home'; // Change this to your home page URL
+        }
+
+        document.addEventListener('touchstart', handleTouchStart, false);
+        document.addEventListener('touchend', handleTouchEnd, false);
+
+
+
+
+const date = new Date();
+const year = date.getFullYear();
+
+document.getElementById("joined").innerHTML = "joined" + " " + year;
+
+window.addEventListener('scroll', function() {
+    const header = document.getElementById('header');
+    const nav = document.getElementById('nav');
+    const logo = document.getElementById('logo');
+    const profilePic = document.getElementById('profile-pic');
+    const businessSection = document.getElementById('business');
+    const businessSectionTop = businessSection.offsetTop;
+
+    if (window.scrollY > 100) {
+
+logo.style.display="block";
+
+profilePic.style.display="none";
+
+        header.classList.add('scrolled');
+        nav.classList.remove('hidden');
+    } else {
+
+logo.style.display="none";
+
+profilePic.style.display="block";
+        header.classList.remove('scrolled');
+        nav.classList.add('hidden');
+    }
+
+    if (window.scrollY >= businessSectionTop) {
+        header.classList.add('business-header');
+        profilePic.classList.add('hidden');
+
+    } else {
+        header.classList.remove('business-header');
+        profilePic.classList.remove('hidden');
+    }
+});
+
+
+</script>
+
+<script src="index.js"></script>
+</body>
+</html>

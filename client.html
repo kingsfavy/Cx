@@ -1,0 +1,62 @@
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Clients</title>
+      <link rel="stylesheet" href="styles.css">
+      <style>
+        body {
+          font-family: Arial, sans-serif;
+          margin: 20px;
+        }
+        .profile {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          border: 1px solid #ccc;
+          padding: 20px;
+          margin-bottom: 20px;
+          border-radius: 10px;
+          box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .profile .img {
+          border-radius: 50%;
+          width: 150px;
+          height: 150px;
+          background-size: cover;
+          background-position: center;
+          margin-bottom: 10px;
+        }
+        .profile h2 {
+          margin: 10px 0;
+        }
+        .profile p {
+          font-size: 16px;
+          color: #333;
+        }
+      </style>
+    </head>
+    <body>
+      <h1>Clients</h1>
+      <div id="clients">
+        ${userProfiles}
+      </div>
+      <script>
+        function adjustColorsBasedOnTime() {
+          const date = new Date();
+          const hours = date.getHours();
+          const body = document.body;
+
+          if (hours >= 6 && hours < 18) {
+            body.style.backgroundColor = "white";
+            body.style.color = "black";
+          } else {
+            body.style.backgroundColor = "black";
+            body.style.color = "white";
+          }
+        }
+        adjustColorsBasedOnTime();
+      </script>
+    </body>
+    </html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .post-container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+        .post-container input, .post-container textarea {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        .post-container img, .post-container audio {
+            max-width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="post-container">
+        <h2>Create a Post</h2>
+        <input type="text" id="postText" placeholder="Enter your text" required><br>
+        <input type="file" id="postImage" accept="image/*"><br>
+        <input type="file" id="postAudio" accept="audio/*"><br>
+        <button onclick="submitPost()">Post</button>
+    </div>
+    <div id="posts"></div>
+
+    <script>
+        function submitPost() {
+            const postText = document.getElementById('postText').value;
+            const postImage = document.getElementById('postImage').files[0];
+            const postAudio = document.getElementById('postAudio').files[0];
+            
+            const formData = new FormData();
+            formData.append('text', postText);
+            if (postImage) formData.append('image', postImage);
+            if (postAudio) formData.append('audio', postAudio);
+
+            fetch('/post', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                displayPost(data);
+                document.getElementById('postText').value = '';
+                document.getElementById('postImage').value = '';
+                document.getElementById('postAudio').value = '';
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        function displayPost(data) {
+            const postsDiv = document.getElementById('posts');
+            const postDiv = document.createElement('div');
+            postDiv.classList.add('post-container');
+
+            const textPara = document.createElement('p');
+            textPara.textContent = data.text;
+            postDiv.appendChild(textPara);
+
+            if (data.image) {
+                const image = document.createElement('img');
+                image.src = data.image;
+                postDiv.appendChild(image);
+            }
+
+            if (data.audio) {
+                const audio = document.createElement('audio');
+                audio.src = data.audio;
+                audio.controls = true;
+                postDiv.appendChild(audio);
+            }
+
+            postsDiv.prepend(postDiv);
+        }
+    </script>
+</body>
+</html>

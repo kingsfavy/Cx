@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<br>
+<main>
+   
+
+        <div class="nav">
+            
+                <a href="#home">Home</a>
+                <a href="#about">About</a>
+                <a href="#portfolio">Portfolio</a>
+                <a href="#blog">Blog</a>
+                <a href="#contact">Contact</a>
+            
+</div>
+
+<br>
+<section id="home">
+    <div class="hero reveal fade-left">
+        <h1>Welcome to Kingsley Effiong Portfolio</h1>
+        <img src="../public/85793273-BE50-4C3F-A591-F633997E0CF5.jpeg" alt="Your Image Description" class="hero-image">
+        <p class="tagline">Crafting Digital Experiences</p>
+        <a href="#works" class="cta">Explore My Work</a>
+    </div>
+</section>
+    <section id="about">
+        <div class="about reveal fade-left">
+            <h2>About Me</h2>
+            <p id="about-me">I'm a dynamic individual with a passion for making a positive impact in his community. With a strong dedication to continuous learning and personal growth, Kingsley strives to excel in both his professional and personal endeavors. He is a proficient coder, skilled in HTML, CSS, JavaScript, and Node.js, with a keen interest in web development and technology. His commitment to excellence is evident in his work ethic and his ability to inspire those around him. In his free time, Kingsley enjoys exploring new places, indulging in his love for photography, and connecting with friends and family. With his positive attitude, determination, and coding expertise, Kingsley is poised to achieve great things and leave a lasting legacy in the tech industry.</p>
+            <!-- Add more about me content here -->
+        </div>
+    </section>
+
+<br>
+
+<section id="hobbies">
+    <div class="hobbies reveal fade-left">
+        <h2>My Hobbies</h2>
+        <ul>
+            <li>Coding and Web Development</li>
+            <li>Reading</li>
+            <li>Traveling</li>
+            <li>Photography</li>
+            <!-- Add more hobbies as needed -->
+        </ul>
+    </div>
+</section>
+
+<br>
+
+<section id="skills">
+    <div class="skills reveal fade-left">
+        <h2>My Skills</h2>
+        <div class="skills-list">
+            <div class="skill-category">
+                <h3>Frontend Development</h3>
+                <ul>
+                    <li>HTML</li>
+                    <li>CSS</li>
+                    <li>JavaScript</li>
+                    <!-- Add more frontend skills as needed -->
+                </ul>
+            </div>
+            <div class="skill-category">
+                <h3>Backend Development</h3>
+                <ul>
+                    <li>Node.js</li>
+                    <li>Express.js</li>
+                    <li>Python</li>
+                    <!-- Add more backend skills as needed -->
+                </ul>
+            </div>
+            <!-- Add more skill categories and skills as needed -->
+        </div>
+    </div>
+</section>
+
+<br>
+<section id="portfolio">
+<br>
+    <div class="container reveal fade-left">
+<br><br>
+        <h2>Portfolio</h2>
+<br><br>
+        <div class="portfolio-item">
+            <img src="project1.jpg" alt="Project 1">
+            <div class="project-info">
+                <h3>Project 1</h3>
+                <p>Description of Project 1</p>
+<br>
+                <a href="project1.html" class="btn">View Project</a>
+            </div>
+        </div>
+        <div class="portfolio-item">
+            <img src="project2.jpg" alt="Project 2">
+            <div class="project-info">
+                <h3>Project 2</h3>
+                <p>Description of Project 2</p>
+<br>
+                <a href="project2.html" class="btn">View Project</a>
+            </div>
+        </div>
+        <!-- Add more portfolio items as needed -->
+    </div>
+</section>
+
+<br>
+
+<section id="works">
+    <div class="works reveal fade-left">
+        <h2>My Works</h2>
+        <div class="work-gallery">
+            <div class="work-item">
+                <img src="85793273-BE50-4C3F-A591-F633997E0CF5.jpeg" alt="Work 1">
+                <h3>WanderLust Tours</h3>
+                <p>A website that makes you explore the wonders of the World at the comfort of your zone. </p>
+            </div>
+            <div class="work-item">
+                <img src="work2.jpg" alt="Work 2">
+                <h3>Kings Shopping Mall</h3>
+                <p>shop your favourite goods and services at a cheap rate.</p>
+            </div>
+            <!-- Add more work items as needed -->
+        </div>
+    </div>
+</section>
+
+<br>
+  <section id="blog">
+        <div class="container reveal fade-left"><br>
+            <h2 class="blog-title">Latest Blog Posts</h2>
+<br>
+            <div id="blogPosts"></div>
+        </div>
+    </section>
+
+
+    <script>
+        const blogPosts = [
+            {
+                id: 1,
+                title: "10 Tips for Better Time Management",
+                content: "Time management is crucial for productivity and success, yet many people struggle to effectively manage their time...",
+                date: "2024-04-01"
+            },
+            {
+                id: 2,
+                title: "The Importance of Regular Exercise",
+                content: "Regular exercise has numerous benefits for both physical and mental health. It can improve cardiovascular health, boost mood...",
+                date: "2024-03-28"
+            },
+            {
+                id: 3,
+                title: "Tips for Remote Work Success",
+                content: "With the rise of remote work, it's important to establish routines and habits that promote productivity and work-life balance...",
+                date: "2024-03-25"
+            }
+            // Add more blog posts as needed
+        ];
+
+        // Function to generate HTML for each blog post
+        function generateBlogPostHTML(post) {
+            return `
+                <div class="blog-post">
+                    <h3>${post.title}</h3>
+
+                    <p>${post.content}</p>
+                    <span>${post.date}</span><br><br><button type="button" class="btn">read more</button><br>
+                </div>
+            `;
+        }
+
+        // Function to render blog posts on the webpage
+        function renderBlogPosts() {
+            const blogPostsContainer = document.getElementById('blogPosts');
+            // Clear existing content
+            blogPostsContainer.innerHTML = '';
+            // Generate HTML for each blog post and append it to the container
+            blogPosts.forEach(post => {
+                const postHTML = generateBlogPostHTML(post);
+                blogPostsContainer.insertAdjacentHTML('beforeend', postHTML);
+            });
+        }
+
+        // Call renderBlogPosts function when the page loads
+        window.onload = renderBlogPosts;
+    </script>
+
+<br>
+<section id="contact">
+<br><br>
+    <div class="container reveal fade-left">
+   <h2>Contact Me</h2>
+<br><br>
+    <form id="contactForm">
+        <input type="text" id="name" name="name" placeholder="name" required>
+        <input type="email" id="email" name="email" placeholder="email" required>
+        <textarea id="message" name="message" rows="4" placeholder="message" required></textarea>
+<br>
+        <button type="submit" class="btn">Send Message</button>
+    </form>
+    </div>
+</section>
+<br>
+<section id="social-media">
+        <div class="container reveal fade-left">
+            <h2>Follow Me on Social Media</h2>
+            <div class="social-icons">
+                <a href="#" class="social-icon"><img src="facebook-icon.png" alt="Facebook"></a>
+                <a href="#" class="social-icon"><img src="twitter-icon.png" alt="Twitter"></a>
+                <a href="#" class="social-icon"><img src="instagram-icon.png" alt="Instagram"></a>
+                <!-- Add more social media icons as needed -->
+            </div>
+        </div>
+    </section>
+<br><br>
+<div class="GT">
+<a href="#home">
+        <button type="button" class="btn">Go to the Top</button></a>
+</div>
+<br><br>
+    <!-- Add Portfolio, Blog, and Contact sections similarly -->
+
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2024 Kingsley Effiong. All rights reserved.</p>
+    </footer>
+</main>
+
+    <!-- Your JavaScript code to fetch data and render the EJS template dynamically -->
+<script>
+function reveal() {
+  var reveals = document.querySelectorAll(".reveal");
+
+  for (var i = 0; i < reveals.length; i++) {
+    var windowHeight = window.innerHeight;
+    var elementTop = reveals[i].getBoundingClientRect().top;
+    var elementVisible = 150;
+
+    if (elementTop < windowHeight - elementVisible) {
+      reveals[i].classList.add("active");
+    } else {
+      reveals[i].classList.remove("active");
+    }
+  }
+}
+
+window.addEventListener("scroll", reveal);
+
+
+// Smooth scrolling
+
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+
+
+
+        function adjustColorsBasedOnTime() {
+            const date = new Date();
+            const hours = date.getHours();
+            const body = document.body;
+
+            if (hours >= 6 && hours < 18) {
+                body.style.backgroundColor = "white";
+                body.style.color = "black";
+            } else {
+                body.style.backgroundColor = "black";
+                body.style.color = "white";
+            }
+        }
+        adjustColorsBasedOnTime();
+</script>
+</body>
+</html>
